@@ -29,13 +29,15 @@ void main() {
       final dio = Dio();
       final payloads = <Map<String, dynamic>>[];
       dio.httpClientAdapter = FakeServer((request) async {
-        if (request.path == '/auth/me')
+        if (request.path == '/auth/me') {
           return jsonResponse(200, {
             'data': {'_id': 'customer-a'},
           });
+        }
         payloads.add(Map<String, dynamic>.from(request.data as Map));
-        if (payloads.length == 1)
+        if (payloads.length == 1) {
           return jsonResponse(503, {'message': 'temporary failure'});
+        }
         return jsonResponse(200, {
           'data': {'checkoutId': 'same-order', 'status': 'succeeded'},
         });

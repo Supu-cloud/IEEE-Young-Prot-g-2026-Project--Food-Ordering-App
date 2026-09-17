@@ -6,12 +6,10 @@ import '../features/auth/domain/auth_session.dart';
 
 class AuthService {
   AuthService({
-    required Dio dio,
+    required this._dio,
     GoogleSignIn? googleSignIn,
-    required String serverClientId,
-  }) : _dio = dio,
-       _serverClientId = serverClientId,
-       _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+    required this._serverClientId,
+  }) : _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
   final Dio _dio;
   final GoogleSignIn _googleSignIn;

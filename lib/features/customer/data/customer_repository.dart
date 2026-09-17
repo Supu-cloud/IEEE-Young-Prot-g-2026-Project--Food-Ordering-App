@@ -245,15 +245,17 @@ class CustomerRepository {
     Response<Map<String, dynamic>> response,
   ) {
     final value = response.data?['data'];
-    if (value is! List)
+    if (value is! List) {
       throw const FormatException('Invalid API list response.');
+    }
     return value.whereType<Map<String, dynamic>>().toList();
   }
 
   static Map<String, dynamic> _data(Response<Map<String, dynamic>> response) {
     final value = response.data?['data'];
-    if (value is! Map<String, dynamic>)
+    if (value is! Map<String, dynamic>) {
       throw const FormatException('Invalid API object response.');
+    }
     return value;
   }
 }

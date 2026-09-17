@@ -18,8 +18,9 @@ class AuthRepository {
         data: {'email': email.trim(), 'password': password},
       );
       final data = response.data?['data'];
-      if (data is! Map<String, dynamic>)
+      if (data is! Map<String, dynamic>) {
         throw const FormatException('Invalid login response.');
+      }
       return AuthSession.fromJson(data);
     } on DioException catch (error) {
       throw ApiException.fromDio(error);

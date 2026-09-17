@@ -157,7 +157,7 @@ class CheckoutController extends ChangeNotifier {
             )
             .toList(),
         'deliveryAddress': address.trim(),
-        if (location != null) 'deliveryLocation': location,
+        'deliveryLocation': ?location,
       });
     } finally {
       // Includes a lost HTTP response after the backend created an intent.
@@ -180,10 +180,11 @@ class CheckoutController extends ChangeNotifier {
       );
     }
     if (current['status'] != 'succeeded') await presentPayment(current);
-    if (_disposed)
+    if (_disposed) {
       throw StateError(
         'Session changed. Resume verification after signing in.',
       );
+    }
     final result = await payments.complete(current['checkoutId'] as String);
     final orders = (result['orders'] as List? ?? [result])
         .whereType<Map>()

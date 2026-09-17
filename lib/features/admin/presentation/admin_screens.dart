@@ -11,7 +11,7 @@ import '../domain/admin_models.dart';
 
 const _pad = EdgeInsets.fromLTRB(16, 14, 16, 110);
 String _money(dynamic value) =>
-    'Rs. ' + (value as num? ?? 0).round().toString();
+    'Rs. ${(value as num? ?? 0).round()}';
 String _label(String value) => value.replaceAll('_', ' ');
 
 class AdminDashboardScreen extends StatelessWidget {
@@ -21,10 +21,12 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) => FutureBuilder<AdminDashboardData>(
     future: repository.dashboard(),
     builder: (context, snapshot) {
-      if (snapshot.connectionState != ConnectionState.done)
+      if (snapshot.connectionState != ConnectionState.done) {
         return const AppLoading(message: 'Loading live overview...');
-      if (snapshot.hasError)
+      }
+      if (snapshot.hasError) {
         return AppError(message: snapshot.error.toString());
+      }
       final data = snapshot.data!, k = data.kpis;
       return RefreshIndicator(
         onRefresh: repository.dashboard,
@@ -112,14 +114,10 @@ class AdminDashboardScreen extends StatelessWidget {
                   child: Icon(Icons.approval, color: AppColors.primaryDark),
                 ),
                 title: Text(
-                  (k['pendingApprovals'] ?? 0).toString() +
-                      ' pending applications',
+                  '${k['pendingApprovals'] ?? 0} pending applications',
                 ),
                 subtitle: Text(
-                  (k['activeOrders'] ?? 0).toString() +
-                      ' active orders · ' +
-                      (k['availableRiders'] ?? 0).toString() +
-                      ' available riders',
+                  '${k['activeOrders'] ?? 0} active orders · ${k['availableRiders'] ?? 0} available riders',
                 ),
               ),
             ),
@@ -150,7 +148,7 @@ class AdminDashboardScreen extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                         subtitle: Text(
-                          item['orders'].toString() + ' completed orders',
+                          '${item['orders']} completed orders',
                         ),
                         trailing: Text(
                           _money(item['revenue']),
@@ -213,16 +211,19 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         child: FutureBuilder<List<AdminApplication>>(
           future: future,
           builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done)
+            if (snapshot.connectionState != ConnectionState.done) {
               return const AppLoading();
-            if (snapshot.hasError)
+            }
+            if (snapshot.hasError) {
               return AppError(
                 message: snapshot.error.toString(),
                 onRetry: reload,
               );
+            }
             final items = snapshot.data!;
-            if (items.isEmpty)
+            if (items.isEmpty) {
               return const Center(child: Text('No pending applications.'));
+            }
             return RefreshIndicator(
               onRefresh: () async => reload(),
               child: ListView(
@@ -402,10 +403,12 @@ class _AdminApplicationDetailScreenState
     body: FutureBuilder<AdminApplication>(
       future: widget.repository.application(widget.id),
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
+        if (snapshot.connectionState != ConnectionState.done) {
           return const AppLoading();
-        if (snapshot.hasError)
+        }
+        if (snapshot.hasError) {
           return AppError(message: snapshot.error.toString());
+        }
         final app = snapshot.data!;
         return ListView(
           padding: const EdgeInsets.all(16),
@@ -507,10 +510,12 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
   Widget build(BuildContext context) => FutureBuilder<AdminAnalyticsData>(
     future: widget.repository.analytics(range: range),
     builder: (context, snapshot) {
-      if (snapshot.connectionState != ConnectionState.done)
+      if (snapshot.connectionState != ConnectionState.done) {
         return const AppLoading(message: 'Loading analytics...');
-      if (snapshot.hasError)
+      }
+      if (snapshot.hasError) {
         return AppError(message: snapshot.error.toString());
+      }
       final data = snapshot.data!, sales = data.sales;
       return ListView(
         padding: _pad,
@@ -563,9 +568,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
                   .take(12)
                   .map(
                     (item) => _CountRow(
-                      item['date'].toString() +
-                          ' · ' +
-                          _label(item['role'].toString()),
+                      '${item['date']} · ${_label(item['role'].toString())}',
                       item['count'] as num? ?? 0,
                     ),
                   )
@@ -691,7 +694,7 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
             onSubmitted: (_) => reload(),
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search),
-              hintText: 'Search ' + widget.kind,
+              hintText: 'Search ${widget.kind}',
               suffixIcon: IconButton(
                 onPressed: reload,
                 icon: const Icon(Icons.arrow_forward),
@@ -703,16 +706,19 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: future,
             builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done)
+              if (snapshot.connectionState != ConnectionState.done) {
                 return const AppLoading();
-              if (snapshot.hasError)
+              }
+              if (snapshot.hasError) {
                 return AppError(
                   message: snapshot.error.toString(),
                   onRetry: reload,
                 );
+              }
               final items = snapshot.data!;
-              if (items.isEmpty)
-                return Center(child: Text('No ' + widget.kind + ' found.'));
+              if (items.isEmpty) {
+                return Center(child: Text('No ${widget.kind} found.'));
+              }
               return ListView(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 30),
                 children: items
@@ -760,12 +766,10 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
     ),
   );
   String _subtitle(Map<String, dynamic> item) => widget.kind == 'users'
-      ? item['email'].toString() + ' · ' + _label(item['role'].toString())
+      ? '${item['email']} · ${_label(item['role'].toString())}'
       : widget.kind == 'restaurants'
-      ? (item['orderCount'] ?? 0).toString() +
-            ' orders · ' +
-            _money(item['revenue'])
-      : _money(item['totalAmount']) + ' · ' + item['paymentStatus'].toString();
+      ? '${item['orderCount'] ?? 0} orders · ${_money(item['revenue'])}'
+      : '${_money(item['totalAmount'])} · ${item['paymentStatus']}';
 }
 
 class AdminReportsScreen extends StatefulWidget {
@@ -849,8 +853,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 ),
                 const Divider(),
                 Text(
-                  ((report!['summary'] as Map?)?['records'] ?? 0).toString() +
-                      ' records',
+                  '${(report!['summary'] as Map?)?['records'] ?? 0} records',
                 ),
                 const SizedBox(height: 8),
                 Text(

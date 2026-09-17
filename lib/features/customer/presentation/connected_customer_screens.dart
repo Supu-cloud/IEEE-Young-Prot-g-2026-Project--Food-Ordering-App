@@ -246,15 +246,17 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
       } else {
         await widget.repository.addToCart(item.id);
       }
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('${item.name} added to cart')));
+      }
     } on Object catch (error) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(_message(error))));
+      }
     } finally {
       if (mounted) setState(() => _adding.remove(item.id));
     }
@@ -427,18 +429,21 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     body: FutureBuilder<List<MenuItemData>>(
       future: _menu,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        if (snapshot.hasError)
+        }
+        if (snapshot.hasError) {
           return _ErrorView(
             error: snapshot.error,
             onRetry: () => setState(
               () => _menu = widget.repository.getMenu(widget.restaurant.id),
             ),
           );
+        }
         final items = snapshot.data ?? [];
-        if (items.isEmpty)
+        if (items.isEmpty) {
           return const Center(child: Text('No available menu items.'));
+        }
         return ListView(
           padding: const EdgeInsets.all(20),
           children: items
@@ -455,17 +460,19 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                         } else {
                           await widget.repository.addToCart(item.id);
                         }
-                        if (context.mounted)
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('${item.name} added to cart'),
                             ),
                           );
+                        }
                       } on Object catch (error) {
-                        if (context.mounted)
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(_message(error))),
                           );
+                        }
                       }
                     },
                   ),
@@ -553,14 +560,16 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         child: FutureBuilder<CustomerProfileData>(
           future: _profile,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            if (snapshot.hasError)
+            }
+            if (snapshot.hasError) {
               return _ErrorView(
                 error: snapshot.error,
                 onRetry: () =>
                     setState(() => _profile = widget.repository.getProfile()),
               );
+            }
             final profile = snapshot.data!;
             return ListView(
               padding: const EdgeInsets.all(20),
@@ -662,10 +671,11 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
       );
       if (mounted) setState(() => _profile = widget.repository.getProfile());
     } on Object catch (error) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(_message(error))));
+      }
     }
   }
 }

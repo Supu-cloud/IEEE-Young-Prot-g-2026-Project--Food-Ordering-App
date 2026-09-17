@@ -105,15 +105,19 @@ void main() {
       }
     },
   );
-  test('denied forever never prompts again or requests a position', () async {
-    location.permission = LocationPermission.deniedForever;
-    await expectLater(
-      currentLocation(),
-      throwsA(predicate((e) => e.toString().contains('app settings'))),
-    );
-    expect(location.permissionRequests, 0);
-    expect(location.positionRequests, 0);
-  });
+test('denied forever never prompts again or requests a position', () async {
+  location.permission = LocationPermission.deniedForever;
+
+  await expectLater(
+    currentLocation(),
+    throwsA(
+      isA<LocationPermissionDeniedForeverException>(),
+    ),
+  );
+
+  expect(location.permissionRequests, 0);
+  expect(location.positionRequests, 0);
+});
   Future<void> show(
     WidgetTester tester,
     Map<String, dynamic> response, {

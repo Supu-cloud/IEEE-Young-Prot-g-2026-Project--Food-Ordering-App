@@ -16,10 +16,10 @@ class OrderSuccessScreen extends StatelessWidget {
       const SizedBox(height: 20),
       Text('Ordered Successfully', textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 8), const Text('Your payment was confirmed and your order was saved.', textAlign: TextAlign.center),
-      const SizedBox(height: 14), SelectableText('Order ID: ' + id, textAlign: TextAlign.center), const SizedBox(height: 26),
+      const SizedBox(height: 14), SelectableText('Order ID: $id', textAlign: TextAlign.center), const SizedBox(height: 26),
       FilledButton(onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => CustomerOrderDetailScreen(repository: repository, orderId: id))), child: const Text('View Order')),
       OutlinedButton(onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => OrderTrackingScreen(repository: repository, orderId: id))), child: const Text('Track Order')),
-      if (orders.length > 1) ...[const SizedBox(height: 14), Text(orders.length.toString() + ' restaurant orders were created.', textAlign: TextAlign.center)],
+      if (orders.length > 1) ...[const SizedBox(height: 14), Text('${orders.length} restaurant orders were created.', textAlign: TextAlign.center)],
     ])));
   }
 }
@@ -38,10 +38,10 @@ class _CustomerOrderDetailScreenState extends State<CustomerOrderDetailScreen> {
     if (loading && value == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     return Scaffold(appBar: AppBar(title: const Text('Order details')), body: RefreshIndicator(onRefresh: load, child: ListView(padding: const EdgeInsets.all(20), children: [
       if (error != null) Text(error.toString(), style: TextStyle(color: Theme.of(context).colorScheme.error)),
-      Text('Order #' + widget.orderId, style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 8), OrderStatusSurface(status: status, child: OrderStatusChip(status, text: status.replaceAll('_', ' ').toUpperCase())),
+      Text('Order #${widget.orderId}', style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 8), OrderStatusSurface(status: status, child: OrderStatusChip(status, text: status.replaceAll('_', ' ').toUpperCase())),
       if (restaurant is Map) ...[Text((restaurant['name'] as String?) ?? 'Restaurant', style: Theme.of(context).textTheme.titleLarge), Text((restaurant['address'] as String?) ?? '')],
-      const SizedBox(height: 10), for (final item in (value?['items'] as List? ?? []).whereType<Map>()) ListTile(contentPadding: EdgeInsets.zero, title: Text(item['quantity'].toString() + ' × ' + (item['name'] ?? 'Menu item').toString()), trailing: Text('LKR ' + item['price'].toString())),
-      Text('Delivery address: ' + (value?['deliveryAddress'] ?? '').toString()), Text('Total: LKR ' + (value?['totalAmount'] ?? 0).toString(), style: Theme.of(context).textTheme.titleLarge), Text('Rider: ' + (rider is Map ? (rider['name'] ?? 'Assigned rider').toString() : 'Awaiting assignment').toString()), const SizedBox(height: 14),
+      const SizedBox(height: 10), for (final item in (value?['items'] as List? ?? []).whereType<Map>()) ListTile(contentPadding: EdgeInsets.zero, title: Text('${item['quantity']} × ${item['name'] ?? 'Menu item'}'), trailing: Text('LKR ${item['price']}')),
+      Text('Delivery address: ${value?['deliveryAddress'] ?? ''}'), Text('Total: LKR ${value?['totalAmount'] ?? 0}', style: Theme.of(context).textTheme.titleLarge), Text('Rider: ${rider is Map ? (rider['name'] ?? 'Assigned rider').toString() : 'Awaiting assignment'}'), const SizedBox(height: 14),
       OutlinedButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => OrderTrackingScreen(repository: widget.repository, orderId: widget.orderId))), icon: const Icon(Icons.route), label: const Text('Track Order')),
       if (delivered && !reviewed) FilledButton.icon(onPressed: () async { final result = await Navigator.push<OrderData>(context, MaterialPageRoute(builder: (_) => OrderReviewScreen(repository: widget.repository, order: OrderData.fromJson(value ?? {}), onSaved: (_) {}))); if (result != null && mounted) load(); }, icon: const Icon(Icons.star), label: const Text('Leave Review')),
       if (reviewed) const ListTile(contentPadding: EdgeInsets.zero, leading: Icon(Icons.verified, color: Colors.green), title: Text('Reviewed'), subtitle: Text('Thank you for rating this order.')),
