@@ -51,12 +51,13 @@ class _BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: ClipOval(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
           child: Image.asset(
             'assets/branding/app_logo.png',
-            width: 72,
-            height: 72,
-            fit: BoxFit.cover,
+            width: 108,
+            height: 88,
+            fit: BoxFit.contain,
           ),
         ),
       );

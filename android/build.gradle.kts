@@ -17,6 +17,12 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+    // Stripe's Java sources target 17; keep built-in Kotlin on the same target.
+    if (name == "stripe_android") {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+            compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {

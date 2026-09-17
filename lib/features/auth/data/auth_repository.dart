@@ -8,14 +8,18 @@ class AuthRepository {
   const AuthRepository(this._dio);
   final Dio _dio;
 
-  Future<AuthSession> login({required String email, required String password}) async {
+  Future<AuthSession> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/login',
         data: {'email': email.trim(), 'password': password},
       );
       final data = response.data?['data'];
-      if (data is! Map<String, dynamic>) throw const FormatException('Invalid login response.');
+      if (data is! Map<String, dynamic>)
+        throw const FormatException('Invalid login response.');
       return AuthSession.fromJson(data);
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
@@ -34,16 +38,23 @@ class AuthRepository {
       UserRole.customer => '/auth/signup',
       UserRole.restaurantOwner => '/auth/signup/restaurant-owner',
       UserRole.deliveryRider => '/auth/signup/delivery-rider',
+      UserRole.admin => throw ArgumentError(
+        'Administrator accounts cannot be self-registered',
+      ),
     };
     try {
-      final response = await _dio.post<Map<String, dynamic>>(path, data: {
-        'name': name.trim(),
-        'email': email.trim(),
-        'password': password,
-        if (phone?.trim().isNotEmpty ?? false) 'phone': phone!.trim(),
-        if (address?.trim().isNotEmpty ?? false) 'address': address!.trim(),
-      });
-      return response.data?['message'] as String? ?? 'Account created successfully';
+      final response = await _dio.post<Map<String, dynamic>>(
+        path,
+        data: {
+          'name': name.trim(),
+          'email': email.trim(),
+          'password': password,
+          if (phone?.trim().isNotEmpty ?? false) 'phone': phone!.trim(),
+          if (address?.trim().isNotEmpty ?? false) 'address': address!.trim(),
+        },
+      );
+      return response.data?['message'] as String? ??
+          'Account created successfully';
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
     }

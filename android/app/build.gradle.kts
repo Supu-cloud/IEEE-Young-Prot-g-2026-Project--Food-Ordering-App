@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "com.example.food_ordering_app"
-    compileSdk = flutter.compileSdkVersion
+    
+    // 1. compileSdk එක 37 ලෙස වෙනස් කරන්න
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
+  static const onImage = Colors.white;
+  static const onImageSecondary = Colors.white70;
+  static const imageOverlay = Color(0xD9262422);
+  static const heroOverlay = Color(0xCC162015);
+  static const heroAccent = Color(0xFFD8EDA6);
+  static const cardShadow = Color(0x0F262422);
   static const primary = Color(0xFF9FC85C);
   static const primaryDark = Color(0xFF94B936);
   static const primaryLight = Color(0xFFDFE798);

@@ -19,7 +19,7 @@ class AuthSession {
     return AuthSession(
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
-      role: UserRole.fromApi(user['role'] as String? ?? 'customer'),
+      role: UserRole.fromApi(user['role'] as String? ?? ''),
     );
   }
 }

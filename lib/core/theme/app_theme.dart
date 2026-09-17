@@ -1,57 +1,62 @@
 import 'package:flutter/material.dart';
-
 import 'app_colors.dart';
 import 'app_typography.dart';
 
 abstract final class AppTheme {
-  static ThemeData get light {
+  static ThemeData get light => _build(Brightness.light);
+  static ThemeData get dark => _build(Brightness.dark);
+  static ThemeData _build(Brightness brightness) {
+    final dark = brightness == Brightness.dark;
     final scheme = ColorScheme.fromSeed(
       seedColor: AppColors.primary,
-      brightness: Brightness.light,
-      primary: AppColors.primary,
-      secondary: AppColors.secondary,
-      surface: AppColors.surface,
-      error: AppColors.error,
+      brightness: brightness,
+      primary: dark ? AppColors.primary : const Color(0xFF42691D),
+      surface: dark ? const Color(0xFF171D15) : AppColors.surface,
     );
-    return ThemeData(
+    final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.background,
       fontFamily: AppTypography.fontFamily,
-      textTheme: const TextTheme(
-        displaySmall: AppTypography.display,
-        headlineSmall: AppTypography.headline,
-        titleMedium: AppTypography.title,
-        bodyMedium: AppTypography.body,
-        bodySmall: AppTypography.caption,
+    );
+    final background = dark ? const Color(0xFF10150F) : AppColors.background;
+    return base.copyWith(
+      scaffoldBackgroundColor: background,
+      textTheme: base.textTheme.copyWith(
+        displaySmall: AppTypography.display.copyWith(color: scheme.onSurface),
+        headlineSmall: AppTypography.headline.copyWith(color: scheme.onSurface),
+        titleMedium: AppTypography.title.copyWith(color: scheme.onSurface),
+        bodyMedium: AppTypography.body.copyWith(color: scheme.onSurface),
+        bodySmall: AppTypography.caption.copyWith(
+          color: scheme.onSurfaceVariant,
+        ),
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+      appBarTheme: AppBarTheme(
+        backgroundColor: background,
+        foregroundColor: scheme.onSurface,
         elevation: 0,
         centerTitle: false,
       ),
-      navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.primaryLight,
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.primaryContainer,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
-      dividerColor: AppColors.border,
+      dividerColor: scheme.outlineVariant,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.border),
+        fillColor: scheme.surfaceContainerLow,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
         ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: scheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.primaryDark, width: 1.5),
+          borderSide: BorderSide(color: scheme.primary, width: 1.5),
         ),
       ),
     );

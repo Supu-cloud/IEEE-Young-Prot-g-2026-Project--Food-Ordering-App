@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
+  bool _googleLoading = false;
   bool _rememberMe = true;
   bool _showPassword = false;
 
@@ -47,6 +48,23 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  // Google Sign-In Logic
+  Future<void> _loginWithGoogle() async {
+    setState(() => _googleLoading = true);
+    try {
+      final session = await widget.dependencies.authService.signInWithGoogle();
+      await widget.dependencies.session.save(session);
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+    } on Object catch (error) {
+      if (!mounted) return;
+      final message = error is Exception ? error.toString().replaceAll('Exception: ', '') : 'Google Sign-In failed.';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -87,7 +105,35 @@ class _LoginScreenState extends State<LoginScreen> {
             ]),
             const SizedBox(height: 12),
             AppButton(label: 'Sign in', onPressed: _login, loading: _loading),
+            const SizedBox(height: 16),
+            
+            // OR Divider
+            const Row(
+              children: [
+                Expanded(child: Divider()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text('OR', style: TextStyle(color: Colors.grey)),
+                ),
+                Expanded(child: Divider()),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Google Sign-In Button
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              icon: _googleLoading 
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
+                  : const Icon(Icons.g_mobiledata, size: 28, color: Colors.red),
+              label: Text(_googleLoading ? 'Signing in...' : 'Continue with Google'),
+              onPressed: (_loading || _googleLoading) ? null : _loginWithGoogle,
+            ),
             const SizedBox(height: 18),
+
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Text("Don't have an account?"),
               TextButton(

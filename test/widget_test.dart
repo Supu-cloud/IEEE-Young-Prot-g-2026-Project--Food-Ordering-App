@@ -5,7 +5,7 @@ import 'package:food_ordering_app/core/di/app_dependencies.dart';
 void main() {
   testWidgets('shows the shared login screen', (tester) async {
     await tester.pumpWidget(
-      FoodOrderingApp(dependencies: AppDependencies.create()),
+      FoodOrderingApp(dependencies: AppDependencies.create(serverClientId: '')),
     );
 
     expect(find.text('Welcome Back'), findsOneWidget);
